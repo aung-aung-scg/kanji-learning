@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  character: MyString
+  meaning_en: MyString
+  meaning_mm: MyString
+  onyomi: MyString
+  kunyomi: MyString
+  strokes: 1
+  jlpt_level: MyString
+
+two:
+  character: MyString
+  meaning_en: MyString
+  meaning_mm: MyString
+  onyomi: MyString
+  kunyomi: MyString
+  strokes: 1
+  jlpt_level: MyString
