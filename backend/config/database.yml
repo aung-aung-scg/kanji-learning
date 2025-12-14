@@ -21,3 +21,6 @@ test:
 
 production:
   url: <%= ENV.fetch("DATABASE_URL") %>
+
+cable:
+  url: <%= ENV.fetch("DATABASE_URL") %>
