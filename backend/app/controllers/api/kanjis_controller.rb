@@ -11,11 +11,34 @@ module Api
       end
 
       if params[:limit].present?
-        kanjis = kanjis.order(created_at: :desc).limit(params[:limit])
+        kanjis = kanjis
+          .order(created_at: :desc)
+          .limit(params[:limit].to_i)
+
+        render json: kanjis
+        return
       end
 
-      render json: kanjis
+      page = params[:page].to_i > 0 ? params[:page].to_i : 1
+      per_page = 20
+
+      total = kanjis.count
+
+      kanjis = kanjis
+        .order(:id)
+        .limit(per_page)
+        .offset((page - 1) * per_page)
+
+      render json: {
+        data: kanjis,
+        page: page,
+        per_page: per_page,
+        total: total,
+        has_next: total > page * per_page,
+        has_prev: page > 1
+      }
     end
+
 
     def show
       kanji = Kanji.find(params[:id])
