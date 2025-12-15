@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   root "home#index"
+  post "/admin/seed", to: "home#seed"
   namespace :api do
     resources :kanjis, only: [:index, :show]
   end
