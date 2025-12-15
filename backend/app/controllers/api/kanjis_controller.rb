@@ -4,7 +4,16 @@ module Api
     before_action :create_kanji_once, only: :index
 
     def index
-      kanjis = Kanji.where(jlpt_level: 5)
+      kanjis = Kanji.all
+
+      if params[:jlpt].present?
+        kanjis = kanjis.where(jlpt_level: params[:jlpt])
+      end
+
+      if params[:limit].present?
+        kanjis = kanjis.order(created_at: :desc).limit(params[:limit])
+      end
+
       render json: kanjis
     end
 
