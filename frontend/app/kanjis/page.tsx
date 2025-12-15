@@ -1,82 +1,96 @@
+import Link from "next/link"
+
 type Kanji = {
-  id: number;
-  character: string;
-  meaning_en: string;
-  meaning_mm: string;
-  onyomi: string;
-  kunyomi: string;
-  strokes: number;
-  jlpt_level: string;
-};
-
-async function getKanjis(): Promise<Kanji[]> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/kanjis`,
-    { cache: "no-store" }
-  );
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch kanjis");
-  }
-
-  return res.json();
+  id: number
+  character: string
+  meaning_en: string
+  meaning_mm: string
+  onyomi: string
+  kunyomi: string
+  strokes: number
+  jlpt_level: string
 }
 
-export default async function KanjiIndex() {
-  const kanjis = await getKanjis();
+type KanjiResponse = {
+  data: Kanji[]
+  has_next: boolean
+  has_prev: boolean
+}
+
+async function getKanjis(page: number): Promise<KanjiResponse> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/kanjis?page=${page}`,
+    { cache: "no-store" }
+  )
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch kanjis")
+  }
+
+  return res.json()
+}
+
+// 🔥 IMPORTANT CHANGE IS HERE
+export default async function KanjiIndex({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const { page } = await searchParams
+  const currentPage = Number(page || 1)
+
+  const { data, has_next, has_prev } = await getKanjis(currentPage)
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="mx-auto max-w-4xl">
 
-        {/* Page Title */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Kanji List
-          </h1>
-          <p className="text-gray-600 mt-1">
-            JLPT kanji with meanings and readings
-          </p>
-        </div>
+        <h1 className="mb-6 text-2xl font-bold">Kanji List</h1>
 
         {/* Kanji Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {kanjis.map((kanji) => (
-            <a
+        <div className="grid grid-cols-3 gap-4 sm:grid-cols-5">
+          {data.map((kanji) => (
+            <Link
               key={kanji.id}
               href={`/kanjis/${kanji.id}`}
-              className="bg-white rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col items-center text-center"
+              className="flex flex-col items-center rounded-xl bg-white p-4 shadow hover:bg-indigo-50 transition"
             >
-              {/* Kanji Character */}
-              <div className="text-4xl font-bold mb-2">
-                {kanji.character}
-              </div>
-
-              {/* Meaning */}
-              <div className="text-sm text-gray-700 font-medium">
+              <span className="text-3xl font-bold">{kanji.character}</span>
+              <span className="mt-1 text-sm text-gray-500">
                 {kanji.meaning_mm}
-              </div>
-
-              {kanji.meaning_en && (
-                <div className="text-xs text-gray-400 mt-1">
-                  {kanji.meaning_en}
-                </div>
-              )}
-
-              {/* Meta */}
-              <div className="flex gap-2 mt-3 text-xs">
-                <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full">
-                  N{kanji.jlpt_level}
-                </span>
-                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
-                  {kanji.strokes} strokes
-                </span>
-              </div>
-            </a>
+              </span>
+            </Link>
           ))}
+        </div>
+
+        {/* Pagination */}
+        <div className="mt-8 flex items-center justify-between">
+          {has_prev ? (
+            <Link
+              href={`/kanjis?page=${currentPage - 1}`}
+              className="rounded-lg border px-4 py-2 hover:bg-gray-100"
+            >
+              ← Previous
+            </Link>
+          ) : (
+            <div />
+          )}
+
+          <span className="text-sm text-gray-500">
+            Page {currentPage}
+          </span>
+
+          {has_next && (
+            <Link
+              href={`/kanjis?page=${currentPage + 1}`}
+              className="rounded-lg border px-4 py-2 hover:bg-gray-100"
+            >
+              Next →
+            </Link>
+          )}
         </div>
 
       </div>
     </main>
-  );
+  )
 }
