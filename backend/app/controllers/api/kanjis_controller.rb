@@ -42,7 +42,15 @@ module Api
 
     def show
       kanji = Kanji.find(params[:id])
-      render json: kanji
+
+      prev = Kanji.where("id < ?", kanji.id).order(id: :desc).first
+      next_kanji = Kanji.where("id > ?", kanji.id).order(id: :asc).first
+
+      render json: {
+        kanji: kanji,
+        prev: prev,
+        next: next_kanji
+      }
     end
 
     private
