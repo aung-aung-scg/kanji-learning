@@ -4,7 +4,7 @@ WORKDIR /app
 
 ENV NODE_OPTIONS=--dns-result-order=ipv4first
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 
 COPY . .
