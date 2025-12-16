@@ -58,14 +58,13 @@ export default async function KanjiDetailPage({
   }
 
   const data = await getKanjiWithNeighbors(id)
-  if (!data) {
+
+  if (!data || !data.kanji) {
     return <div className="p-8">Kanji not found</div>
   }
 
   const { kanji, prev, next } = data
 
-  const hex = kanjiToHex(kanji.character)
-  const svgContent = hex ? await getSVG(hex) : null
 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10">
@@ -77,7 +76,7 @@ export default async function KanjiDetailPage({
           </p>
         </div>
 
-        {svgContent && <KanjiSVG svgContent={svgContent} />}
+        <KanjiSVG character={kanji.character} />
 
         <div className="mt-8 grid gap-4 text-lg sm:grid-cols-2">
           <p><b>English:</b> {kanji.meaning_en}</p>
