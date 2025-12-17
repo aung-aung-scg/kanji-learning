@@ -16,7 +16,5 @@ class HomeController < ApplicationController
     rescue => e
       render json: { error: e.message, backtrace: e.backtrace[0..10] }, status: 500
     end
-
-    render json: { status: "seeded" }
   end
 end
