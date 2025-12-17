@@ -10,15 +10,14 @@ class HomeController < ApplicationController
     #   return render json: { error: "unauthorized" }, status: :unauthorized
     # end
     begin
-      # This is the correct, official way in Rails 7/8 to run pending migrations from code
-      ActiveRecord::Base.connection.migration_context.migrate
+      # Correct Rails 8 way to run pending migrations programmatically
+      ActiveRecord::Tasks::DatabaseTasks.migrate
 
       Rails.application.load_seed
 
       render json: {
         status: "seeded successfully",
-        kanji_count: Kanji.count,
-        migrated: true
+        kanji_count: Kanji.count
       }
     rescue => e
       render json: {
