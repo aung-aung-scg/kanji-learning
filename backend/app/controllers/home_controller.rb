@@ -9,6 +9,7 @@ class HomeController < ApplicationController
     # unless secret == ENV["ADMIN_SEED_SECRET"]
     #   return render json: { error: "unauthorized" }, status: :unauthorized
     # end
+    ActiveRecord::Migrator.migrate(ActiveRecord::Migrator.migrations_paths)
 
     Rails.application.load_seed
 

@@ -17,8 +17,7 @@ async function getKanjis(page: number): Promise<ApiResponse> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/kanjis?page=${page}`,
     {
-      // allow fast back/forward navigation
-      next: { revalidate: 60 },
+      cache: "no-store",
     }
   )
 
