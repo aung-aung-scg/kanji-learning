@@ -10,19 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_13_023018) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_16_115649) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "kanjis", force: :cascade do |t|
     t.string "character"
+    t.jsonb "combinations"
     t.datetime "created_at", null: false
+    t.jsonb "examples"
+    t.text "full_meaning_en"
+    t.text "full_meaning_mm"
     t.string "jlpt_level"
     t.string "kunyomi"
     t.string "meaning_en"
     t.string "meaning_mm"
     t.string "onyomi"
     t.integer "strokes"
+    t.string "unicode"
     t.datetime "updated_at", null: false
   end
 end

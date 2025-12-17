@@ -15,12 +15,16 @@ module Api
           .order(created_at: :desc)
           .limit(params[:limit].to_i)
 
-        render json: kanjis
+        render json: {
+          data: kanjis,
+          has_next: false,
+          has_prev: false
+        }
         return
       end
 
       page = params[:page].to_i > 0 ? params[:page].to_i : 1
-      per_page = 20
+      per_page = 25
 
       total = kanjis.count
 
