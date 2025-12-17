@@ -1944,20 +1944,22 @@ n5_kanji_complete = [
 
 # Seed data to database
 n5_kanji_complete.each do |k|
-  Kanji.find_or_create_by!(character: k[:c]) do |kanji|
-    kanji.meaning_en = k[:en]
-    kanji.meaning_mm = k[:mm]
-    kanji.onyomi = k[:on]
-    kanji.kunyomi = k[:kun]
-    kanji.strokes = k[:s]
-    kanji.jlpt_level = k[:jlpt]
-    kanji.full_meaning_en = k[:full_meaning_en]
-    kanji.full_meaning_mm = k[:full_meaning_mm]
-    kanji.combinations = k[:combinations]
-    kanji.examples = k[:examples]
-  end
-  puts "Seeded kanji: #{k[:c]}"
+  kanji = Kanji.find_or_create_by!(character: k[:c])
+
+  kanji.update!(
+    meaning_en:       k[:en],
+    meaning_mm:       k[:mm],
+    onyomi:           k[:on],
+    kunyomi:          k[:kun],
+    strokes:          k[:s],
+    jlpt_level:       k[:jlpt].to_s,
+    full_meaning_en:  k[:full_meaning_en],
+    full_meaning_mm:  k[:full_meaning_mm],
+    examples:         k[:examples],
+    combinations:     k[:combinations]
+  )
+  puts "Seeded/updated kanji: #{k[:c]}"
 end
 
 
-puts "Seeded #{n5_kanji_complete.count} N5 kanji successfully!"
+puts "Successfully processed #{n5_kanji_complete.count} N5 kanji!"
