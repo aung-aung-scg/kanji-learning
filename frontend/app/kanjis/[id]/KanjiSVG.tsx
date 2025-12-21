@@ -5,7 +5,6 @@ import { gsap } from "gsap"
 
 interface KanjiSVGProps {
   character: string
-  className?: string
 }
 
 function kanjiToHex(kanji: string) {
@@ -13,22 +12,38 @@ function kanjiToHex(kanji: string) {
   return hex ? hex.padStart(5, "0") : null
 }
 
-export default function KanjiSVG({ character, className = "" }: KanjiSVGProps) {
+export default function KanjiSVG({ character }: KanjiSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const [svgContent, setSvgContent] = useState<string | null>(null)
-  const [strokeIndex, setStrokeIndex] = useState(0)
 
+  /** Load SVG */
   useEffect(() => {
     const hex = kanjiToHex(character)
     if (!hex) return
+
     fetch(`/kanjivg/${hex}.svg`)
       .then((res) => res.text())
       .then((svg) => {
         setSvgContent(svg)
-        setStrokeIndex(0)
+        timelineRef.current?.kill()
+        timelineRef.current = null
       })
   }, [character])
+
+  /** Show static kanji after SVG is mounted */
+  useEffect(() => {
+    if (!svgContent) return
+
+    requestAnimationFrame(() => {
+      if (!svgRef.current) return
+      svgRef.current.querySelectorAll("path").forEach((path) => {
+        path.style.strokeDasharray = "none"
+        path.style.strokeDashoffset = "0"
+        path.style.stroke = "black"
+      })
+    })
+  }, [svgContent])
 
   const resetStrokes = () => {
     if (!svgRef.current) return
@@ -43,20 +58,23 @@ export default function KanjiSVG({ character, className = "" }: KanjiSVGProps) {
   const buildTimeline = () => {
     if (!svgRef.current) return
     const paths = Array.from(svgRef.current.querySelectorAll("path"))
+
     resetStrokes()
+
     const tl = gsap.timeline({ paused: true })
 
-    const STROKE_DURATION = 1.2
-    const STROKE_DELAY = 0.6
-
     paths.forEach((path, i) => {
-      tl.to(path, {
-        strokeDashoffset: 0,
-        duration: STROKE_DURATION,
-        ease: "power1.inOut",
-        onStart: () => { path.style.stroke = "#FF0000" },
-        onComplete: () => { path.style.stroke = "black" },
-      }, i * STROKE_DELAY)
+      tl.to(
+        path,
+        {
+          strokeDashoffset: 0,
+          duration: 1.2,
+          ease: "power1.inOut",
+          onStart: () => { path.style.stroke = "#FF0000" },
+          onComplete: () => { path.style.stroke = "black" },
+        },
+        i * 0.6
+      )
     })
 
     timelineRef.current = tl
@@ -68,6 +86,7 @@ export default function KanjiSVG({ character, className = "" }: KanjiSVGProps) {
   }
 
   const pause = () => timelineRef.current?.pause()
+
   const replay = () => {
     timelineRef.current?.kill()
     timelineRef.current = null
@@ -78,18 +97,17 @@ export default function KanjiSVG({ character, className = "" }: KanjiSVGProps) {
   if (!svgContent) return null
 
   return (
-    <div className={`flex flex-col items-center gap-4 ${className}`}>
-      <div className="w-full h-full flex-shrink-0">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-32 h-32 md:w-40 md:h-40 flex-shrink-0">
         <div
+          className="w-full h-full"
           dangerouslySetInnerHTML={{ __html: svgContent }}
           ref={(el) => {
             svgRef.current = el?.querySelector("svg") ?? null
           }}
-          className="w-full h-full"
         />
       </div>
 
-      {/* Buttons below the SVG */}
       <div className="flex gap-2">
         <button
           onClick={play}
