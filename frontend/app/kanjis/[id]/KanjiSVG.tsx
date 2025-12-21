@@ -5,6 +5,7 @@ import { gsap } from "gsap"
 
 interface KanjiSVGProps {
   character: string
+  className?: string
 }
 
 function kanjiToHex(kanji: string) {
@@ -12,7 +13,7 @@ function kanjiToHex(kanji: string) {
   return hex ? hex.padStart(5, "0") : null
 }
 
-export default function KanjiSVG({ character }: KanjiSVGProps) {
+export default function KanjiSVG({ character, className = "" }: KanjiSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const [svgContent, setSvgContent] = useState<string | null>(null)
@@ -55,7 +56,7 @@ export default function KanjiSVG({ character }: KanjiSVGProps) {
         ease: "power1.inOut",
         onStart: () => { path.style.stroke = "#FF0000" },
         onComplete: () => { path.style.stroke = "black" },
-      }, i * STROKE_DELAY) // add delay per path
+      }, i * STROKE_DELAY)
     })
 
     timelineRef.current = tl
@@ -77,14 +78,14 @@ export default function KanjiSVG({ character }: KanjiSVGProps) {
   if (!svgContent) return null
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* SVG */}
-      <div className="w-32 h-32 md:w-40 md:h-40 flex-shrink-0">
+    <div className={`flex flex-col items-center gap-4 ${className}`}>
+      <div className="w-full h-full flex-shrink-0">
         <div
           dangerouslySetInnerHTML={{ __html: svgContent }}
           ref={(el) => {
             svgRef.current = el?.querySelector("svg") ?? null
           }}
+          className="w-full h-full"
         />
       </div>
 

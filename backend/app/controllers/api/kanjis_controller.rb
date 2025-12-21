@@ -7,7 +7,7 @@ module Api
       kanjis = Kanji.all
 
       if params[:jlpt].present?
-        kanjis = kanjis.where(jlpt_level: params[:jlpt])
+        kanjis = kanjis.where(jlpt_level: params[:jlpt].to_i)
       end
 
       if params[:limit].present?

@@ -4,6 +4,7 @@ class HomeController < ApplicationController
   end
 
   def seed
+    puts "called seedddd=============="
     # secret = request.headers["X-ADMIN-SECRET"]
 
     # unless secret == ENV["ADMIN_SEED_SECRET"]
@@ -11,13 +12,18 @@ class HomeController < ApplicationController
     # end
     begin
       # Correct Rails 8 way to run pending migrations programmatically
-      ActiveRecord::Tasks::DatabaseTasks.migrate
+      # ActiveRecord::Tasks::DatabaseTasks.migrate
 
-      Rails.application.load_seed
+      # Rails.application.load_seed
+       path = Rails.root.join("db/jlpt/n4_seed.rb")
+
+      raise "Seed file not found: #{path}" unless File.exist?(path)
+
+      load path
 
       render json: {
         status: "seeded successfully",
-        kanji_count: Kanji.count
+        kanji_count: Kanji.where(jlpt_level: 4).count
       }
     rescue => e
       render json: {
