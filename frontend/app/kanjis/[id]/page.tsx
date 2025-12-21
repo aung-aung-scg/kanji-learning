@@ -1,4 +1,6 @@
 import KanjiDetailClient from "./KanjiDetailClient"
+import KanjiNavigation from "./KanjiNavigation"
+
 
 type Kanji = {
   id: number
@@ -11,7 +13,7 @@ type Kanji = {
   kunyomi: string
   strokes: number
   jlpt_level: string
-  examples: { jp: string; en: string; mm: string }[]
+  examples: { jp: string; reading: string; en: string; mm: string }[]
   combinations: { word: string; reading: string; meaning_en: string; meaning_mm: string }[]
 }
 
@@ -76,11 +78,10 @@ export default async function KanjiDetailPage({
         </div>
 
         {/* Client Interactive Section */}
-        <KanjiDetailClient
-          initialKanji={kanji}
-          prev={prev}
-          next={next}
-        />
+        <KanjiDetailClient initialKanji={kanji} />
+        <div className="sticky bottom-4 bg-transparent">
+          <KanjiNavigation prev={prev} next={next} />
+        </div>
 
       </div>
     </main>

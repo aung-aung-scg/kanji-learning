@@ -52,35 +52,6 @@ export default async function KanjiIndex({
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="mx-auto max-w-5xl">
-
-        {/* Header */}
-        <h1 className="mb-6 text-2xl font-bold">
-          JLPT Kanji List {currentLevel !== "All Levels" && `- ${currentLevel}`}
-        </h1>
-
-        {/* JLPT Level Filter Buttons */}
-        <div className="mb-8 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/kanjis"
-            className={`px-5 py-3 rounded-xl font-semibold transition ${
-              !jlpt ? "bg-indigo-600 text-white" : "bg-white text-indigo-600 shadow-sm hover:shadow"
-            }`}
-          >
-            All Levels
-          </Link>
-          {["5", "4", "3", "2", "1"].map((level) => (
-            <Link
-              key={level}
-              href={`/kanjis?jlpt=${level}${page > 1 ? `&page=${page}` : ""}`}
-              className={`px-5 py-3 rounded-xl font-semibold transition ${
-                jlpt === level ? "bg-indigo-600 text-white" : "bg-white text-indigo-600 shadow-sm hover:shadow"
-              }`}
-            >
-              JLPT N{level}
-            </Link>
-          ))}
-        </div>
-
         {/* Kanji Grid */}
         {data.length === 0 ? (
           <p className="text-center text-gray-500 py-12">
